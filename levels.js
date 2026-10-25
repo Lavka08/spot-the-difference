@@ -3,8 +3,8 @@
 window.LEVELS = [
   {
     "name": "Маркет скинов",
-    "a": "images/level1-a.jpg",
-    "b": "images/level1-b.jpg",
+    "a": "level1-a.jpg",
+    "b": "level1-b.jpg",
     "diffs": [
       {
         "x": 0.2335,
@@ -35,8 +35,8 @@ window.LEVELS = [
   },
   {
     "name": "Энергетики",
-    "a": "images/level2-a.jpg",
-    "b": "images/level2-b.jpg",
+    "a": "level2-a.jpg",
+    "b": "level2-b.jpg",
     "diffs": [
       {
         "x": 0.7627,
@@ -67,8 +67,8 @@ window.LEVELS = [
   },
   {
     "name": "Скины Fortnite",
-    "a": "images/level3-a.jpg",
-    "b": "images/level3-b.jpg",
+    "a": "level3-a.jpg",
+    "b": "level3-b.jpg",
     "diffs": [
       {
         "x": 0.3492,

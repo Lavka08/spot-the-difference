@@ -97,10 +97,20 @@
 
   function loadImage(img, src) {
     return new Promise((res) => {
-      img.onload = res;
-      img.onerror = res;
+      img.onload = () => res(true);
+      img.onerror = () => res(false);
       img.src = src;
     });
+  }
+
+  function showLoadError(files) {
+    clearInterval(state.timerId);
+    $("boards").innerHTML =
+      `<div class="card center"><div class="big-emoji">🖼️</div>
+       <h2>Картинки не загрузились</h2>
+       <p class="muted">Не найдены файлы:<br><b>${files.join("<br>")}</b></p>
+       <p class="muted">Проверь, что картинки level1-a.jpg … level3-b.jpg лежат рядом с index.html
+       и названия файлов совпадают (с учётом больших и маленьких букв).</p></div>`;
   }
 
   async function startLevel(i) {
@@ -120,7 +130,10 @@
     $("btn-hint").disabled = false;
     show("game");
 
-    await Promise.all([loadImage(imgA, lvl.a), loadImage(imgB, lvl.b)]);
+    const [okA, okB] = await Promise.all([loadImage(imgA, lvl.a), loadImage(imgB, lvl.b)]);
+    if (!okA || !okB) {
+      return showLoadError([!okA && lvl.a, !okB && lvl.b].filter(Boolean));
+    }
     const ratio = imgA.naturalWidth / imgA.naturalHeight || 4 / 3;
     document.documentElement.style.setProperty("--ratio", ratio);
 
