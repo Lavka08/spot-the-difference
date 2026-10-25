@@ -1,0 +1,195 @@
+:root {
+  --bg: #1d2433;
+  --card: #273046;
+  --text: #f2f4f8;
+  --muted: #a9b2c6;
+  --accent: #ffcb47;
+  --accent-text: #1d2433;
+  --good: #3ddc84;
+  --bad: #ff4d5e;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overscroll-behavior: none;
+}
+
+.mono { font-variant-numeric: tabular-nums; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); line-height: 1.5; }
+
+.screen { display: none; min-height: 100dvh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ---------- Карточки (старт, переходы, результат) ---------- */
+.card {
+  margin: auto;
+  width: min(440px, calc(100% - 32px));
+  background: var(--card);
+  border-radius: 22px;
+  padding: 28px 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+}
+.center { text-align: center; }
+h1 { margin: 12px 0 8px; font-size: 28px; }
+h2 { margin: 8px 0 8px; font-size: 24px; }
+
+.logo {
+  width: 72px; height: 72px; margin: 0 auto;
+  border-radius: 50%;
+  background: var(--accent); color: var(--accent-text);
+  font-size: 42px; font-weight: 800;
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 6px rgba(255, 203, 71, .25);
+}
+.big-emoji { font-size: 52px; }
+
+.rules { text-align: left; color: var(--muted); padding-left: 20px; line-height: 1.6; }
+.best { color: var(--accent); font-weight: 600; }
+
+.btn {
+  font: inherit;
+  border: 0;
+  border-radius: var(--radius);
+  padding: 12px 18px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform .08s;
+}
+.btn:active { transform: scale(.96); }
+.btn.primary { background: var(--accent); color: var(--accent-text); font-weight: 700; }
+.btn.big { width: 100%; font-size: 18px; padding: 16px; margin-top: 10px; }
+.btn.ghost { background: transparent; color: var(--muted); margin-top: 8px; text-decoration: underline; }
+
+.stats { display: flex; justify-content: space-around; margin: 18px 0; }
+.stat-num { display: block; font-size: 30px; font-weight: 800; }
+.stat-label { font-size: 13px; color: var(--muted); }
+
+.per-level { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+.per-level td { padding: 6px 4px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.per-level td:last-child { text-align: right; }
+
+.share-msg { min-height: 1.2em; color: var(--good); font-size: 14px; margin: 8px 0 0; }
+
+/* ---------- Игровой экран ---------- */
+.hud {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: rgba(29, 36, 51, .95);
+  backdrop-filter: blur(6px);
+}
+.hud-cell { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.hud-label, .hud-value { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hud-cell.right { text-align: right; }
+.hud-label { font-size: 12px; color: var(--muted); }
+.hud-value { font-size: 18px; font-weight: 700; }
+.hud-value.bump { animation: bump .35s; transform-origin: left center; overflow: visible; }
+@keyframes bump { 50% { transform: scale(1.18); color: var(--good); } }
+
+.btn.hint {
+  width: 48px; height: 48px; padding: 0;
+  font-size: 22px;
+  background: var(--card);
+}
+.btn.hint:disabled { opacity: .35; }
+
+.boards {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 0 8px 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  align-items: center;
+}
+.board {
+  position: relative;
+  width: 100%;
+  /* обе картинки должны влезть в экран телефона одна над другой */
+  max-width: min(100%, calc((100dvh - 96px) / 2 * var(--ratio, 1.333)));
+  border-radius: 10px;
+  overflow: hidden;
+  touch-action: manipulation;
+  user-select: none; -webkit-user-select: none;
+  cursor: crosshair;
+  background: #000;
+}
+.board img {
+  display: block; width: 100%; height: auto;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+}
+.overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+
+/* На широком экране (компьютер, планшет боком) — рядом */
+@media (min-aspect-ratio: 5/4) and (min-width: 700px) {
+  .boards { flex-direction: row; justify-content: center; align-items: flex-start; gap: 12px; }
+  .board { max-width: min(calc(50% - 6px), calc((100dvh - 100px) * var(--ratio, 1.333))); }
+}
+
+/* Кружок найденного отличия */
+.found-ring {
+  fill: none;
+  stroke: var(--good);
+  stroke-width: 3.5;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, .8));
+  transform-box: fill-box; transform-origin: center;
+  animation: pop .45s cubic-bezier(.2, 1.6, .4, 1);
+}
+@keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.hint-ring {
+  fill: rgba(255, 203, 71, .15);
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-dasharray: 6 4;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box; transform-origin: center;
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse { 50% { transform: scale(1.25); opacity: .6; } }
+
+/* Промах */
+.miss-mark { position: absolute; width: 0; height: 0; pointer-events: none; }
+.miss-mark::before, .miss-mark::after {
+  content: ""; position: absolute; left: -14px; top: -2px;
+  width: 28px; height: 4px; border-radius: 2px;
+  background: var(--bad);
+  box-shadow: 0 0 6px rgba(0, 0, 0, .6);
+  animation: miss .7s forwards;
+}
+.miss-mark::before { transform: rotate(45deg); }
+.miss-mark::after { transform: rotate(-45deg); }
+@keyframes miss { 0% { opacity: 1; scale: .4; } 30% { scale: 1.2; } 100% { opacity: 0; scale: 1; } }
+
+.board.flash::after {
+  content: ""; position: absolute; inset: 0;
+  background: rgba(255, 50, 70, .35);
+  animation: fade .35s forwards;
+  pointer-events: none;
+}
+@keyframes fade { to { opacity: 0; } }
+.boards.shake { animation: shake .3s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+.penalty {
+  position: fixed; top: 70px; left: 50%; z-index: 10;
+  transform: translateX(-50%);
+  background: var(--bad); color: #fff; font-weight: 800;
+  padding: 6px 14px; border-radius: 999px;
+  opacity: 0; pointer-events: none;
+}
+.penalty.show { animation: penalty .8s; }
+@keyframes penalty { 0% { opacity: 0; transform: translate(-50%, 10px); } 20%, 70% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; }
+}
